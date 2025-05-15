@@ -13,7 +13,7 @@ namespace App;
 abstract class DAO{
 
     private static $host   = 'mysql:host=127.0.0.1;port=3306';
-    private static $dbname = 'forum';
+    private static $dbname = 'forumclindecke';
     private static $dbuser = 'root';
     private static $dbpass = '';
 
@@ -61,7 +61,7 @@ abstract class DAO{
         catch(\Exception $e){
             
             echo $e->getMessage();
-        }
+        } 
     }
     
     public static function delete($sql, $params){

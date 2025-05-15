@@ -9,7 +9,7 @@ define('PUBLIC_DIR', "public/");     //le chemin où se trouvent les fichiers pu
 
 define('DEFAULT_CTRL', 'Home');//nom du contrôleur par défaut
 define('ADMIN_MAIL', "admin@gmail.com");//mail de l'administrateur
-
+ 
 require("app/Autoloader.php");
 
 Autoloader::register();

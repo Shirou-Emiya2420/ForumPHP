@@ -3,75 +3,77 @@ namespace Model\Entities;
 
 use App\Entity;
 
-/*
-    En programmation orientée objet, une classe finale (final class) est une classe que vous ne pouvez pas étendre, c'est-à-dire qu'aucune autre classe ne peut hériter de cette classe. En d'autres termes, une classe finale ne peut pas être utilisée comme classe parente.
-*/
+final class Topic extends Entity {
 
-final class Topic extends Entity{
+    private int $id;
+    private string $title;
+    private \DateTime $creationDate;
+    private $user;         // instance de User
+    private $category;     // instance de Category
+    private bool $isClose;
 
-    private $id;
-    private $title;
-    private $user;
-    private $category;
-    private $creationDate;
-    private $closed;
-
-    public function __construct($data){         
-        $this->hydrate($data);        
+    public function __construct($data) {
+        $this->hydrate($data);
     }
 
-    /**
-     * Get the value of id
-     */ 
-    public function getId(){
+    public function getId(): int {
         return $this->id;
     }
 
-    /**
-     * Set the value of id
-     *
-     * @return  self
-     */ 
-    public function setId($id){
+    public function setId(int $id): self {
         $this->id = $id;
         return $this;
     }
 
-    /**
-     * Get the value of title
-     */ 
-    public function getTitle(){
+    public function getTitle(): string {
         return $this->title;
     }
 
-    /**
-     * Set the value of title
-     *
-     * @return  self
-     */ 
-    public function setTitle($title){
+    public function setTitle(string $title): self {
         $this->title = $title;
         return $this;
     }
 
-    /**
-     * Get the value of user
-     */ 
-    public function getUser(){
+    public function getCreationDate(): \DateTime {
+        return $this->creationDate;
+    }
+
+    public function setCreationDate($date): self {
+        if (!$date instanceof \DateTime) {
+            $date = new \DateTime($date);
+        }
+        $this->creationDate = $date;
+        return $this;
+    }
+
+    public function getUser() {
         return $this->user;
     }
 
-    /**
-     * Set the value of user
-     *
-     * @return  self
-     */ 
-    public function setUser($user){
+    public function setUser($user): self {
         $this->user = $user;
         return $this;
     }
 
-    public function __toString(){
+    public function getCategory() {
+        return $this->category;
+    }
+
+    public function setCategory($category): self {
+        $this->category = $category;
+        return $this;
+    }
+
+    public function getIsClosed(): bool {
+        return $this->isClose;
+    }
+
+    public function setIsClose($value): self {
+        $this->isClose = (bool)$value;
+        return $this;
+    }
+
+    public function __toString(): string {
         return $this->title;
     }
 }

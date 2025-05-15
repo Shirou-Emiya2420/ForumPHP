@@ -9,8 +9,8 @@
         <script src="https://cdn.tiny.cloud/1/zg3mwraazn1b2ezih16je1tc6z7gwp5yd4pod06ae5uai8pa/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
         <title>FORUM</title>
-    </head>
-    <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
+    </head> 
+    <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col pb-12">
         <div id="wrapper" class="flex-grow">
             <div id="mainpage" class="container mx-auto p-4">
                 <!-- c'est ici que les messages (erreur ou succès) s'affichent-->
@@ -21,8 +21,8 @@
                     <nav class="flex justify-between items-center p-4">
                         <div id="nav-left" class="flex space-x-4">
                             <a href="index.php" class="hover:text-blue-500 font-semibold">Accueil</a>
-                            <?php if(App\Session::isAdmin()): ?>
-                                <a href="index.php?ctrl=home&action=users" class="hover:text-blue-500">Voir la liste des gens</a>
+                            <?php /* var_dump(App\Session::isAdmin()); die(); */ if(App\Session::isAdmin()): ?>
+                                <a href="index.php?ctrl=home&action=listUsers" class="hover:text-blue-500">Voir la liste des gens</a>
                             <?php endif; ?>
                         </div>
                         <div id="nav-right" class="flex space-x-4">
@@ -32,6 +32,7 @@
                                 <span class="fas fa-user"></span>&nbsp;<?= App\Session::getUser()?>
                             </a>
                             <a href="index.php?ctrl=security&action=logout" class="hover:text-red-500">Déconnexion</a>
+                            <a href="index.php?ctrl=forum&action=index" class="hover:text-blue-500">Liste des catégories</a>
                         <?php else: ?>
                             <a href="index.php?ctrl=security&action=login" class="hover:text-blue-500">Connexion</a>
                             <a href="index.php?ctrl=security&action=register" class="hover:text-blue-500">Inscription</a>
@@ -46,8 +47,8 @@
                 </main>
             </div>
 
-            <footer class="bg-white text-center text-sm py-4 border-t">
-                <p>&copy; <?= date_create("now")->format("Y") ?> - 
+            <footer class="bg-white text-center text-sm py-4 border-t w-full fixed bottom-0 left-0 z-50">
+                <p>&copy; <?= date("Y") ?> - 
                     <a href="#" class="text-blue-500 hover:underline">Règlement du forum</a> - 
                     <a href="#" class="text-blue-500 hover:underline">Mentions légales</a>
                 </p>

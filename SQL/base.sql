@@ -1,40 +1,38 @@
-DROP DATABASE forum;
-CREATE DATABASE forum;
-USE forum;
+DROP DATABASE forumclindecke;
+CREATE DATABASE forumclindecke;
+USE forumclindecke;
 
-CREATE TABLE utilisateur(
-    id_utilisateur INT AUTO_INCREMENT PRIMARY KEY,
-    role JSON,
+CREATE TABLE user(
+    id_user INT AUTO_INCREMENT PRIMARY KEY,
+    role VARCHAR(50) NOT NULL,
     nickName VARCHAR(50) NOT NULL,
     password VARCHAR(127) NOT NULL,
-    date_inscription DATETIME NOT NULL
+    registrationDate DATETIME NOT NULL
+);
+ 
+CREATE TABLE category(
+    id_category INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE sujet(
-    id_sujet INT AUTO_INCREMENT PRIMARY KEY,
-    titre VARCHAR(255) NOT NULL,
-    date_creation DATETIME NOT NULL,
-    id_utilisateur INT NOT NULL,
-    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur)
+CREATE TABLE topic(
+    id_topic INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    creationDate DATETIME NOT NULL,
+    user_id INT NOT NULL,
+    category_id INT NOT NULL,
+    isClose BOOLEAN NOT NULL,
+    FOREIGN KEY (category_id) REFERENCES category(id_category),
+    FOREIGN KEY (user_id) REFERENCES user(id_user)
 );
 
-CREATE TABLE message (
-    id_message INT AUTO_INCREMENT PRIMARY KEY,
-    contenu TEXT NOT NULL,
-    date_creation DATETIME NOT NULL,
-    id_sujet INT,
-    id_utilisateur INT,
-    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id_utilisateur),
-    FOREIGN KEY (id_sujet) REFERENCES sujet(id_sujet)
-);
-CREATE TABLE categorie(
-    id_categorie INT AUTO_INCREMENT PRIMARY KEY,
-    nom_categorie VARCHAR(50) NOT NULL
-);
-CREATE TABLE sujet_catégorie(
-    id_categorie INT,
-    id_sujet INT,
-    FOREIGN KEY (id_categorie) REFERENCES categorie(id_categorie),
-    FOREIGN KEY (id_sujet) REFERENCES sujet(id_sujet)
+CREATE TABLE post (
+    id_post INT AUTO_INCREMENT PRIMARY KEY,
+    content TEXT NOT NULL,
+    creationDate DATETIME NOT NULL,
+    topic_id INT,
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES user(id_user),
+    FOREIGN KEY (topic_id) REFERENCES topic(id_topic)
 );
 

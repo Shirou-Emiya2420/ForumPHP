@@ -3,17 +3,53 @@ namespace Controller;
 
 use App\AbstractController;
 use App\ControllerInterface;
-
+use App\Session;
 use Model\Entities\User; 
 
 class SecurityController extends AbstractController{
     // contiendra les méthodes liées à l'authentification : register, login et logout
 
-    public function register () {
 
+
+    public function register() {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    
+            $nickName = filter_input(INPUT_POST, "nickName", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $password = filter_input(INPUT_POST, "password", FILTER_DEFAULT);
+            $passwordConfirm = filter_input(INPUT_POST, "passwordConfirm", FILTER_DEFAULT);
+    
+            if ($nickName && $password && $passwordConfirm) {
+                $userManager = new \Model\Managers\UserManager();
+    
+                // Vérifie si le pseudo existe déjà
+                if ($userManager->findUserByPseudo($nickName)) {
+                    \App\Session::addFlash("error", "Pseudo \"$nickName\" déjà existant.");
+                } else {
+                    $userManager->add([
+                        "nickName" => $nickName,
+                        "password" => password_hash($password, PASSWORD_DEFAULT),
+                        "role" => "membre",
+                        "registrationDate" => date("Y-m-d H:i:s")
+                    ]);
+    
+                    \App\Session::addFlash("success", "Compte créé avec succès !");
+                    return $this->redirectTo("security", "login");
+                }
+            }
+        }
+    
+        return [
+            "view" => VIEW_DIR."security/register.php",
+            "meta_description" => "Formulaire d'inscription au Forum"
+        ];
     }
+    
     public function logout () {
-
+        \App\Session::unSetUser();
+        return [
+            "view" => VIEW_DIR."security/login.php",
+            "meta_description" => "Déconnexion au forum"
+        ];
     }
 
     public function login() {
@@ -37,12 +73,12 @@ class SecurityController extends AbstractController{
             /* die(); */ /* trinity42 */
 
             // Vérifie si le mot de passe est correct
-            if ($dbUser["password"] && $password === $dbUser["password"]) {
-                \App\Session::setUser(new User($dbUser));  // Ou garde juste l'ID ou le pseudo si tu préfères
-                \App\Session::addFlash("success", "Connexion réussie !");
+            if ($dbUser["password"] && password_verify($password, $dbUser["password"])) {
+                Session::setUser(new User($dbUser));  // Ou garde juste l'ID ou le pseudo si tu préfères
+                Session::addFlash("success", "Connexion réussie !");
                 $this->redirectTo("home");
             } else {
-                \App\Session::addFlash("error", "Identifiants incorrects.");
+                Session::addFlash("error", "Identifiants incorrects.");
                 $this->redirectTo("security", "login");
             }
         }
@@ -53,5 +89,18 @@ class SecurityController extends AbstractController{
         ];
     }
 
-
+    public function profile(){
+        
+        if (Session::getUser()){
+            return [
+                "view" => VIEW_DIR."security/profile.php",
+                "meta_description" => "Déconnexion au forum"
+            ];
+        }else{
+            return [
+                "view" => VIEW_DIR."security/login.php",
+                "meta_description" => "Déconnexion au forum"
+            ];
+        }
+    }
 }

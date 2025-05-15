@@ -59,6 +59,7 @@ abstract class Manager{
             INSERT INTO user (username,password,email) VALUES ('Squalli', 'dfsyfshfbzeifbqefbq', 'sql@gmail.com') 
         */
         try{
+            /* die("ajout tenté"); */
             return DAO::insert($sql);
         }
         catch(\PDOException $e){

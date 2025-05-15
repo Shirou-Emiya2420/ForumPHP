@@ -4,21 +4,28 @@ namespace Controller;
 use App\AbstractController;
 use App\ControllerInterface;
 use Model\Managers\UserManager;
+use Model\Managers\TopicManager;
 
 class HomeController extends AbstractController implements ControllerInterface {
 
-    public function index(){
+    public function index() {
+        $topicManager = new TopicManager();
+        $topTopics = $topicManager->findTopTopics();
+        /* var_dump(value: iterator_to_array($topTopics));die(); */
         return [
-            "view" => VIEW_DIR."home.php",
-            "meta_description" => "Page d'accueil du forum"
+            "view" => VIEW_DIR . "home.php",
+            "meta_description" => "Accueil du forum",
+            "data" => [
+                "topTopics" => $topTopics
+            ]
         ];
     }
         
-    public function users(){
-        $this->restrictTo("ROLE_USER");
+    public function listUsers(){
+        $this->restrictTo("admin");
 
         $manager = new UserManager();
-        $users = $manager->findAll(['register_date', 'DESC']);
+        $users = $manager->findAll(['registrationDate', 'DESC']);
 
         return [
             "view" => VIEW_DIR."security/users.php",

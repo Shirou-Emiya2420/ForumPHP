@@ -1,13 +1,29 @@
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE post;
+TRUNCATE TABLE topic;
+TRUNCATE TABLE category;
+TRUNCATE TABLE user;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
 -- Utilisateurs
-INSERT INTO utilisateur (role, nickName, password, date_inscription) VALUES
-('{"type": "admin"}', 'NeoMatrix', 'trinity42', '2025-03-01 10:00:00'),
-('{"type": "membre"}', 'GeraltRivia', 'witcher123', '2025-03-02 11:00:00'),
-('{"type": "membre"}', 'RipleyS', 'alienHunter!', '2025-03-03 12:00:00'), 
-('{"type": "membre"}', 'ZeldaFan', 'hyruleFTW', '2025-03-04 13:00:00'),
-('{"type": "membre"}', 'TonyStark', 'iamironman', '2025-03-05 14:00:00');
+INSERT INTO user (role, nickName, password, registrationDate) VALUES
+('admin', 'NeoMatrix', 'trinity42', '2025-03-01 10:00:00'),
+('membre', 'GeraltRivia', 'witcher123', '2025-03-02 11:00:00'),
+('membre', 'RipleyS', 'alienHunter!', '2025-03-03 12:00:00'), 
+('membre', 'ZeldaFan', 'hyruleFTW', '2025-03-04 13:00:00'),
+('membre', 'TonyStark', 'iamironman', '2025-03-05 14:00:00'),
+('membre', 'Dovahkiin', 'fusRoDah!', '2025-03-06 10:00:00'),
+('membre', 'Serana', 'volkihar123', '2025-03-06 11:00:00'),
+('membre', 'Miraak', 'tentacule88', '2025-03-06 12:00:00'),
+('membre', 'Gehrman', 'firstHunter', '2025-03-07 10:00:00'),
+('membre', 'LadyMaria', 'astralBlade', '2025-03-07 11:00:00'),
+('membre', 'EileenCrow', 'hunterCode', '2025-03-07 12:00:00');
+
 
 -- Catégories
-INSERT INTO categorie (nom_categorie) VALUES
+INSERT INTO category (name) VALUES
 ('Jeux Vidéo'),
 ('Séries / Films'),
 ('Univers Fantastiques'),
@@ -15,34 +31,34 @@ INSERT INTO categorie (nom_categorie) VALUES
 ('Adaptations'),
 ('Comparatifs');
 
--- Sujets
-INSERT INTO sujet (titre, date_creation, id_utilisateur) VALUES
-('Meilleur boss de Dark Souls ?', '2025-04-01 10:00:00', 1),
-('Analyse de la saga The Witcher', '2025-04-02 11:00:00', 2),
-('Théories sur Alien : Covenant', '2025-04-03 12:00:00', 3),
-('Timeline de Zelda : mythe ou réalité ?', '2025-04-04 13:00:00', 4),
-('Qui est le plus fort : Thor ou Iron Man ?', '2025-04-05 14:00:00', 5),
-('Références cachées dans Cyberpunk 2077', '2025-04-06 15:00:00', 1),
-('Le lore de Bloodborne expliqué', '2025-04-07 16:00:00', 2),
-('Adaptation live de One Piece : avis ?', '2025-04-08 17:00:00', 3),
-('Comparaison Elden Ring vs Skyrim', '2025-04-09 18:00:00', 4),
-('Les comics les plus sous-côtés', '2025-04-10 19:00:00', 5);
+-- Sujets (topics)
+INSERT INTO topic (title, creationDate, user_id, category_id, isClose) VALUES
+('Meilleur boss de Dark Souls ?', '2025-04-01 10:00:00', 1, 1, 0),
+('Analyse de la saga The Witcher', '2025-04-02 11:00:00', 2, 1, 0),
+('Théories sur Alien : Covenant', '2025-04-03 12:00:00', 3, 2, 0),
+('Timeline de Zelda : mythe ou réalité ?', '2025-04-04 13:00:00', 4, 1, 0),
+('Qui est le plus fort : Thor ou Iron Man ?', '2025-04-05 14:00:00', 5, 4, 0),
+('Références cachées dans Cyberpunk 2077', '2025-04-06 15:00:00', 1, 1, 0),
+('Le lore de Bloodborne expliqué', '2025-04-07 16:00:00', 2, 1, 0),
+('Adaptation live de One Piece : avis ?', '2025-04-08 17:00:00', 3, 5, 0),
+('Comparaison Elden Ring vs Skyrim', '2025-04-09 18:00:00', 4, 6, 0),
+('Les comics les plus sous-côtés', '2025-04-10 19:00:00', 5, 4, 0),
+-- Skyrim
+('Quel est le meilleur mod de gameplay ?', '2025-04-11 10:00:00', 6, 1, 0),
+('Quêtes secondaires les plus marquantes ?', '2025-04-11 11:00:00', 7, 1, 0),
+('Faut-il rejoindre les Sombrages ?', '2025-04-11 12:00:00', 8, 1, 0),
+('Votre build préféré pour un archer ?', '2025-04-11 13:00:00', 6, 1, 0),
+('Avez-vous déjà battu Karstaag ?', '2025-04-11 14:00:00', 7, 1, 0),
+-- Bloodborne
+('Quelle arme avez-vous utilisée le plus ?', '2025-04-12 10:00:00', 9, 1, 0),
+('Quelle est la meilleure fin selon vous ?', '2025-04-12 11:00:00', 10, 1, 0),
+('Les Cauchemars vous ont-ils traumatisé ?', '2025-04-12 12:00:00', 11, 1, 0),
+('Les boss les plus sous-estimés ?', '2025-04-12 13:00:00', 9, 1, 0),
+('Que pensez-vous du DLC The Old Hunters ?', '2025-04-12 14:00:00', 10, 1, 0);
 
--- Liaisons sujet-catégorie
-INSERT INTO sujet_catégorie (id_categorie, id_sujet) VALUES
-(1, 1),
-(1, 2),
-(2, 3),
-(1, 4),
-(4, 5),
-(1, 6),
-(1, 7),
-(5, 8),
-(6, 9),
-(4, 10);
 
 
-INSERT INTO message (contenu, date_creation, id_sujet, id_utilisateur) VALUES
+INSERT INTO post (content, creationDate, topic_id, user_id) VALUES
 -- Sujet 1
 ('Artorias reste le plus stylé, son lore est incroyable.', '2025-04-01 11:00:00', 1, 1),
 ('Franchement, j’ai galéré contre Manus, mais quelle ambiance !', '2025-04-01 11:10:00', 1, 2),
@@ -211,4 +227,44 @@ INSERT INTO message (contenu, date_creation, id_sujet, id_utilisateur) VALUES
 ('V pour Vendetta reste d’actualité.', '2025-04-10 11:50:00', 10, 1),
 ('East of West est très original.', '2025-04-10 12:00:00', 10, 2),
 ('J’aimerais une série sur Black Science.', '2025-04-10 12:10:00', 10, 3),
-('Fables est un bijou.', '2025-04-10 12:20:00', 10, 4);
+('Fables est un bijou.', '2025-04-10 12:20:00', 10, 4),
+
+('Artorias est incroyable, mais Gael reste mon préféré.', '2025-04-13 10:00:00', 1, 6),
+('La politique dans The Witcher est mieux développée que dans beaucoup de RPG.', '2025-04-13 10:05:00', 2, 7),
+('Alien : Covenant aurait dû s’assumer comme un film d’androïdes, pas d’Alien.', '2025-04-13 10:10:00', 3, 8),
+('La timeline Zelda est du pur mythe, c’est ça qui la rend belle.', '2025-04-13 10:15:00', 4, 6),
+('Thor écrase Iron Man, sauf si c’est écrit par Marvel Studios.', '2025-04-13 10:20:00', 5, 7),
+('J’ai vu une affiche de The Witcher dans une ruelle, clin d’œil sympa !', '2025-04-13 10:25:00', 6, 8),
+('L’univers de Bloodborne est le plus abouti de FromSoftware.', '2025-04-13 10:30:00', 7, 9),
+('J’ai été surpris par la qualité de l’adaptation live de One Piece !', '2025-04-13 10:35:00', 8, 10),
+('Skyrim offre plus de liberté, mais Elden Ring est plus immersif.', '2025-04-13 10:40:00', 9, 11),
+('Locke & Key mériterait une meilleure adaptation animée.', '2025-04-13 10:45:00', 10, 9),
+-- Topic 11 à 15 : Skyrim
+('Je préfère Immersive Citizens, ça change tout.', '2025-04-14 10:00:00', 11, 1),
+('Orphan Rock et la quête de la sorcière, un bijou oublié.', '2025-04-14 10:01:00', 12, 2),
+('J’ai toujours été team Sombrages, même si c’est pas populaire.', '2025-04-14 10:02:00', 13, 3),
+('Un archer furtif avec le masque de Krosis, rien de mieux.', '2025-04-14 10:03:00', 14, 4),
+('Karstaag m’a détruit 3 fois avant que je le passe.', '2025-04-14 10:04:00', 15, 5),
+('SkyUI + ENB = combo parfait pour Skyrim moderne.', '2025-04-14 10:05:00', 11, 6),
+('La quête de la Mère Noire est la plus marquante.', '2025-04-14 10:06:00', 12, 7),
+('Sombrages ou Empire ? Aucun n’a raison au fond.', '2025-04-14 10:07:00', 13, 8),
+('Mon build préféré : archer vampire, furtif, rapide, létal.', '2025-04-14 10:08:00', 14, 9),
+('Karstaag est un boss optionnel mais brutal.', '2025-04-14 10:09:00', 15, 10),
+('J’ai battu Karstaag… grâce au cri ralentisseur.', '2025-04-14 10:10:00', 15, 11),
+
+-- Topic 16 à 20 : Bloodborne
+('J’ai fini le jeu avec la Lame d’ossement, trop stylée.', '2025-04-14 10:11:00', 16, 1),
+('La fin avec la Présence Lunaire est la plus cryptique.', '2025-04-14 10:12:00', 17, 2),
+('Le cauchemar de Mensis m’a donné la gerbe.', '2025-04-14 10:13:00', 18, 3),
+('Les boss comme Micolash sont trop sous-estimés.', '2025-04-14 10:14:00', 19, 4),
+('Le DLC est l’apogée de FromSoftware.', '2025-04-14 10:15:00', 20, 5),
+('Je ne me lasse jamais de la scie-lance.', '2025-04-14 10:16:00', 16, 6),
+('Fin astrale : je l’ai eue sans le vouloir !', '2025-04-14 10:17:00', 17, 7),
+('Le cauchemar m’a marqué à vie.', '2025-04-14 10:18:00', 18, 8),
+('Micolash est plus complexe qu’on le pense.', '2025-04-14 10:19:00', 19, 9),
+('The Old Hunters mérite un jeu à lui seul.', '2025-04-14 10:20:00', 20, 10),
+('Le DLC m’a détruit… mais c’était parfait.', '2025-04-14 10:21:00', 20, 11);
+
+
+
+

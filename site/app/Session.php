@@ -29,6 +29,12 @@ class Session{
     /**
     *   met un user dans la session (pour le maintenir connecté)
     */
+    public static function unSetUser(){
+        if(isset($_SESSION["user"])){
+            unset($_SESSION["user"]);
+        }
+    }
+
     public static function setUser($user){
         $_SESSION["user"] = $user;
     }
@@ -39,8 +45,8 @@ class Session{
 
     public static function isAdmin(){
         // attention de bien définir la méthode "hasRole" dans l'entité User en fonction de la façon dont sont gérés les rôles en base de données
-        /* var_dump(self::getUser()); die(); */
-        if(self::getUser() && self::getUser()->hasRole("ROLE_ADMIN")){
+/*         var_dump(self::getUser()); var_dump(self::getUser()->hasRole("admin")); die(); */
+        if(self::getUser() && self::getUser()->hasRole("admin")){
             return true;
         }
         return false;

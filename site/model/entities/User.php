@@ -5,22 +5,22 @@ use App\Entity;
 
 final class User extends Entity {
 
-    private $id_utilisateur;
+    private $id;
     private $nickName;
     private $password;
-    private $date_inscription;
-    private $roles = [];
+    private $registrationDate;
+    private $role;
 
     public function __construct($data) {
         $this->hydrate($data);
     }
 
-    public function getId_utilisateur() {
-        return $this->id_utilisateur;
+    public function getId() {
+        return $this->id;
     }
 
-    public function setId_utilisateur($id) {
-        $this->id_utilisateur = $id;
+    public function setId($id) {
+        $this->id = $id;
         return $this;
     }
 
@@ -42,22 +42,32 @@ final class User extends Entity {
         return $this;
     }
 
-    public function getDate_inscription() {
-        return $this->date_inscription;
+    public function getRegistrationDate() {
+        return $this->registrationDate;
     }
-
-    public function setDate_inscription($date) {
-        $this->date_inscription = $date;
+    
+    public function setRegistrationDate($date) {
+        $this->registrationDate = $date;
         return $this;
     }
+
+    public function setRole($role) {
+        $this->role = $role;
+        return $this;
+    }
+    public function getRole() {
+        return $this->role;
+    }
+    
+    
 
     public function __toString() {
         return $this->nickName;
     }
     
     public function hasRole($role) {
-        /* var_dump($role); die(); */
-        return in_array($role, $this->roles);
+/*     var_dump("admin"); var_dump($role == "admin"); var_dump($role); die(); */
+        return $role === $this->role;
     }
 
 }
