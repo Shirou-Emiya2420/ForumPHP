@@ -168,4 +168,22 @@ class SecurityController extends AbstractController{
     return $this->redirectTo("security", "profile");
     }   
 
+
+
+
+    public function deleteAccount() {
+    $user = Session::getUser();
+    if (!$user) {
+        $this->redirectTo("security", "login");
+    }
+
+    $id = $user->getId();
+    $manager = new \Model\Managers\UserManager();
+    $manager->delete($id);
+
+    Session::unSetUser();
+    $this->redirectTo("home", "index");
+}
+
+
 }

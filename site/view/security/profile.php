@@ -25,6 +25,14 @@ $topics = $topicManager->findTopicsByUser($user->getId());
 
 
 <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 space-y-4 text-gray-800">
+    <form method="post" action="index.php?ctrl=security&action=deleteAccount" 
+        onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.');"
+        class="text-center mt-6">
+        <button type="submit" 
+                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+            Supprimer mon compte
+        </button>
+    </form>
     <p><strong>Pseudo :</strong> <?= $user->getNickName() ?></p>
     <p><strong>Rôle :</strong> <?= $user->getRole() ?></p>
     <p><strong>Inscription :</strong> 
