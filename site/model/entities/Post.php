@@ -63,6 +63,17 @@ final class Post extends Entity {
         return $this;
     }
 
+    public function isLikedBy(int $userId): bool {
+        $manager = new \Model\Managers\PostManager();
+        return $manager->hasUserLiked($this->getId(), $userId);
+    }
+
+    public function getLikeCount(): int {
+        $manager = new \Model\Managers\PostManager();
+        return $manager->getLikeCount($this->getId());
+    }
+
+
     public function __toString() {
         return $this->content;
     }

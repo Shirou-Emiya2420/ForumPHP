@@ -22,5 +22,11 @@ class UserManager extends Manager{
         
         return $result ? $result : null; // Retourne null si rien trouvé
     }
+
+    public function updateAvatar($id, $pathImg) {
+        $sql = "UPDATE user SET pathImg = :img WHERE id_user = :id";
+        return \App\DAO::update($sql, ['img' => $pathImg, 'id' => $id]);
+    }
+
     
 }

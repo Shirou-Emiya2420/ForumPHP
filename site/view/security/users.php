@@ -9,21 +9,32 @@
                 <th class="px-6 py-3">Pseudo</th>
                 <th class="px-6 py-3">Rôle</th>
                 <th class="px-6 py-3">Inscription</th>
+                <?php if (App\Session::isAdmin()): ?>
+                    <th class="px-6 py-3">Actions</th>
+                <?php endif; ?>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 text-gray-800">
-
-            <?php /* var_dump($users); die(); */ foreach ($users as $user): /* var_dump($user); die(); */ ?>
+            <?php foreach ($users as $user): ?>
                 <tr>
                     <td class="px-6 py-4 font-medium"><?= $user->getNickName() ?></td>
                     <td class="px-6 py-4"><?= $user->getRole() ?></td>
                     <td class="px-6 py-4">
-                    <?php
-                    $date = $user->getRegistrationDate();
-                    echo is_string($date) ? (new DateTime($date))->format('d/m/Y H:i') 
-                        : ($date instanceof DateTime ? $date->format('d/m/Y H:i') : "?");
-                    ?>
+                        <?php
+                        $date = $user->getRegistrationDate();
+                        echo is_string($date) ? (new DateTime($date))->format('d/m/Y H:i') 
+                            : ($date instanceof DateTime ? $date->format('d/m/Y H:i') : "?");
+                        ?>
                     </td>
+                    <?php if (App\Session::isAdmin()): ?>
+                        <td class="px-6 py-4">
+                            <form method="post" action="index.php?ctrl=security&action=deleteUser&id=<?= $user->getId() ?>" onsubmit="return confirm('Supprimer cet utilisateur ?');">
+                                <button class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm">
+                                    Supprimer
+                                </button>
+                            </form>
+                        </td>
+                    <?php endif; ?>
                 </tr>
             <?php endforeach; ?>
         </tbody>

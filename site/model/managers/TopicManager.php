@@ -60,4 +60,6 @@ class TopicManager extends Manager{
         return DAO::update($sql, ["val" => $value, "id" => $id]);
     }
     
+
+
 }

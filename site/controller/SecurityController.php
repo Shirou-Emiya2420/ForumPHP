@@ -89,6 +89,32 @@ class SecurityController extends AbstractController{
         ];
     }
 
+    public function deleteUser($id) {
+        $userManager = new \Model\Managers\UserManager();
+        $user = $userManager->findOneById($id);
+
+        /* var_dump($user); die(); */
+        if (!$user) {
+            \App\Session::addFlash("error", "Utilisateur introuvable.");
+            return $this->redirectTo("security", "listUsers");
+        }
+
+        if (!\App\Session::isAdmin()) {
+            \App\Session::addFlash("error", "Accès refusé.");
+            return $this->redirectTo("forum", "index");
+        }
+
+        if ($user->getId() == \App\Session::getUser()->getId()) {
+            \App\Session::addFlash("error", "Vous ne pouvez pas vous supprimer vous-même.");
+            return $this->redirectTo("home", "listUsers");
+        }
+        
+        var_dump($userManager->delete($id));/* die("ok"); */
+        \App\Session::addFlash("success", "Utilisateur supprimé.");
+        /* die("ok"); */
+        return $this->redirectTo("home", "listUsers");
+    }
+
     public function profile(){
         
         if (Session::getUser()){
@@ -103,4 +129,43 @@ class SecurityController extends AbstractController{
             ];
         }
     }
+
+    public function uploadAvatar() {
+    $user = \App\Session::getUser();
+    if (!$user) return $this->redirectTo("security", "login");
+
+    if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+        $file = $_FILES['avatar'];
+        $maxSize = 5 * 1024 * 1024; // 5 Mo
+
+        if ($file['size'] <= $maxSize) {
+            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $allowed = ['png', 'jpg', 'jpeg'];
+
+            if (in_array(strtolower($ext), $allowed)) {
+                $filename = "avatar_" . $user->getId();
+                $newPath = "uploads/$filename.$ext";
+
+                move_uploaded_file($file['tmp_name'], $newPath);
+
+                // mettre à jour la BDD
+                $manager = new \Model\Managers\UserManager();
+                $manager->updateAvatar($user->getId(), "$filename.$ext");
+
+                // mettre à jour l'objet en session
+                $user->setPathImg($filename . "." . $ext);
+                \App\Session::addFlash("success", "Image mise à jour !");
+            } else {
+                \App\Session::addFlash("error", "Format non autorisé.");
+            }
+        } else {
+            \App\Session::addFlash("error", "Image trop lourde (max 2 Mo).");
+        }
+    } else {
+        \App\Session::addFlash("error", "Erreur lors de l'envoi.");
+    }
+
+    return $this->redirectTo("security", "profile");
+    }   
+
 }

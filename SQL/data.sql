@@ -1,11 +1,3 @@
-SET FOREIGN_KEY_CHECKS = 0;
-
-TRUNCATE TABLE post;
-TRUNCATE TABLE topic;
-TRUNCATE TABLE category;
-TRUNCATE TABLE user;
-
-SET FOREIGN_KEY_CHECKS = 1;
 
 -- Utilisateurs
 INSERT INTO user (role, nickName, password, registrationDate) VALUES

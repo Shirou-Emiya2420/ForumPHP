@@ -46,22 +46,30 @@ class ForumController extends AbstractController implements ControllerInterface{
         ];
     }
 
-    public function getTopicsById($id) {
-        $topicManager = new TopicManager();
-        $postManager = new PostManager(); // renommé pour cohérence
-        /* var_dump($id); die(); */
-        $topic = $topicManager->findOneById($id);
-        $messages = $postManager->findMessagesByTopic($id);
-        /* var_dump($messages); var_dump($topic); die(); */
-        return [
-            "view" => VIEW_DIR."forum/topicContent.php",
-            "meta_description" => "Messages du topic : ".$topic,
-            "data" => [
-                "topic" => $topic,
-                "messages" => $messages
-            ]
-        ];
+public function getTopicsById($id) {
+    $topicManager = new TopicManager();
+    $postManager = new PostManager();
+    $topic = $topicManager->findOneById($id);
+
+    if (!$topic) {
+        Session::addFlash("error", "Ce topic n'existe pas.");
+        return $this->redirectTo("forum", "index");
     }
+
+    $order = isset($_GET["order"]) && $_GET["order"] === "desc" ? "DESC" : "ASC";
+    $_SESSION["order"] = $order; // stocke la préférence
+
+    $messages = $postManager->findMessagesByTopic($id, $order);
+
+    return [
+        "view" => VIEW_DIR."forum/topicContent.php",
+        "meta_description" => "Messages du topic : ".$topic,
+        "data" => [
+            "topic" => $topic,
+            "messages" => $messages
+        ]
+    ];
+}
 
     public function addPost($id) {
         if (!(Session::getUser())) {
@@ -162,5 +170,69 @@ class ForumController extends AbstractController implements ControllerInterface{
         return $this->redirectTo("forum", "getTopicsById", $id);
     }
     
+    public function addNewTopic() {
+        if (!Session::getUser()) {
+            return $this->redirectTo("security", "login");
+        }
+
+        $title = filter_input(INPUT_POST, "title", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $categoryId = filter_input(INPUT_POST, "category", FILTER_VALIDATE_INT);
+        $content = filter_input(INPUT_POST, "content", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+        $topicManager = new TopicManager();
+        $postManager = new PostManager();
+
+        if ($title && $categoryId && $content) {
+            var_dump($topicId = $topicManager->add([
+                "title" => $title,
+                "creationDate" => date("Y-m-d H:i:s"),
+                "user_id" => Session::getUser()->getId(),
+                "category_id" => $categoryId,
+                "isClose" => 0
+            ])); /* die(); */
+
+        var_dump($postManager->add([
+            "content" => $content,
+            "creationDate" => date("Y-m-d H:i:s"),
+            "topic_id" => $topicId,
+            "user_id" => Session::getUser()->getId()
+        ])); /* die(); */
+
+        Session::addFlash("success", "Topic créé avec succès.");
+        return $this->redirectTo("forum", "getTopicsById", $topicId);
+        }
+
+        $catManager = new CategoryManager();
+        $categories = $catManager->findAll(["name", "ASC"]);
+
+        return [
+            "view" => VIEW_DIR."forum/newTopic.php",
+            "meta_description" => "Créer un nouveau topic",
+            "data" => [
+                "categories" => $categories
+            ]
+        ];
+    }
+
+    public function toggleLike() {
+        $postId = intval($_GET['id']);
+        $user = Session::getUser();
+
+        /* var_dump($postId); die(); */
+        if (!$user) {
+            $this->redirectTo("security", "login");
+        }
+
+        $userId = $user->getId();
+        $manager = new PostManager();
+        /* var_dump($postId, $userId); die(); */
+        $manager->toggleLike($postId, $userId);
+
+        $post = $manager->findOneById($postId);
+        $topicId = $post->getTopic()->getId();
+
+        $this->redirectTo("forum", "getTopicsById", $topicId);
+    }
+
     
 }

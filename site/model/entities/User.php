@@ -5,11 +5,12 @@ use App\Entity;
 
 final class User extends Entity {
 
-    private $id;
-    private $nickName;
-    private $password;
+    private int $id;
+    private string $nickName;
+    private string $password;
     private $registrationDate;
-    private $role;
+    private string $role;
+    private string $pathImg;
 
     public function __construct($data) {
         $this->hydrate($data);
@@ -59,11 +60,20 @@ final class User extends Entity {
         return $this->role;
     }
     
-    
+    public function getPathImg() {
+        return $this->pathImg ?? 'default.png';
+    }   
+
+    public function setPathImg($pathImg) {
+        $this->pathImg = $pathImg;
+        return $this;
+    }
 
     public function __toString() {
         return $this->nickName;
     }
+
+    
     
     public function hasRole($role) {
 /*     var_dump("admin"); var_dump($role == "admin"); var_dump($role); die(); */
