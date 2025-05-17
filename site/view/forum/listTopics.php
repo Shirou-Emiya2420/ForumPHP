@@ -31,8 +31,10 @@ $topics = $result["data"]['topics'];
             <p class="text-sm text-gray-500">
                 Posté par 
                 <span class="font-medium">
-                    <?= $author ? $author->getNickName() : "Utilisateur supprimé" ?>
+                    <?= $author ? $author->getNickName() : "Utilisateur supprimé" ?> 
+                    <?= $topic->getCreationDate()->format('d/m/Y H:i') ?>
                 </span>
+                
             </p>
         </div>
     </div>
