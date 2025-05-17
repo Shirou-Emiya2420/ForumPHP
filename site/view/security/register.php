@@ -19,7 +19,7 @@
         <input type="password" name="passwordConfirm" id="passwordConfirm" required
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300">
     </div>
-
+    <input type="hidden" name="csrf_token" value="<?= \App\Session::getCsrfToken() ?>">
     <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
         S'inscrire
     </button>

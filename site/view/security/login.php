@@ -10,7 +10,7 @@
         <label for="password" class="block font-semibold mb-1">Mot de passe</label>
         <input type="password" id="password" name="password" required class="w-full px-4 py-2 border rounded">
     </div>
-
+    <input type="hidden" name="csrf_token" value="<?= \App\Session::getCsrfToken() ?>">
     <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
         Se connecter
     </button>

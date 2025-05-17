@@ -18,7 +18,20 @@ class SecurityController extends AbstractController{
             $password = filter_input(INPUT_POST, "password", FILTER_DEFAULT);
             $passwordConfirm = filter_input(INPUT_POST, "passwordConfirm", FILTER_DEFAULT);
     
+            if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== \App\Session::getCsrfToken()) {
+                http_response_code(403);
+                \App\Session::addFlash("error", "Requête invalide (protection CSRF).");
+                return $this->redirectTo("security", "register");
+            }
+
+
             if ($nickName && $password && $passwordConfirm) {
+                $regex = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{12,}$/';
+                if (!preg_match($regex, $password)) {
+                    \App\Session::addFlash("error", "Mot de passe trop faible !");
+                    return $this->redirectTo("security", "register");
+                }
+
                 $userManager = new \Model\Managers\UserManager();
     
                 // Vérifie si le pseudo existe déjà
@@ -131,42 +144,47 @@ class SecurityController extends AbstractController{
     }
 
     public function uploadAvatar() {
-    $user = \App\Session::getUser();
-    if (!$user) return $this->redirectTo("security", "login");
+        $user = \App\Session::getUser();
+        if (!$user) return $this->redirectTo("security", "login");
 
-    if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
-        $file = $_FILES['avatar'];
-        $maxSize = 5 * 1024 * 1024; // 5 Mo
+        if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+            $file = $_FILES['avatar'];
+            $maxSize = 5 * 1024 * 1024; // 5 Mo
 
-        if ($file['size'] <= $maxSize) {
-            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $allowed = ['png', 'jpg', 'jpeg'];
+            if ($file['size'] <= $maxSize) {
+                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                $allowedExt = ['png', 'jpg', 'jpeg'];
+                $allowedMime = ['image/png', 'image/jpeg'];
 
-            if (in_array(strtolower($ext), $allowed)) {
-                $filename = "avatar_" . $user->getId();
-                $newPath = "uploads/$filename.$ext";
+                // 🔒 Vérification extension + type MIME réel
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mime = finfo_file($finfo, $file['tmp_name']);
+                finfo_close($finfo);
 
-                move_uploaded_file($file['tmp_name'], $newPath);
+                if (in_array($ext, $allowedExt) && in_array($mime, $allowedMime)) {
+                    $filename = "avatar_" . $user->getId();
+                    $newPath = "uploads/$filename.$ext";
 
-                // mettre à jour la BDD
-                $manager = new \Model\Managers\UserManager();
-                $manager->updateAvatar($user->getId(), "$filename.$ext");
+                    move_uploaded_file($file['tmp_name'], $newPath);
 
-                // mettre à jour l'objet en session
-                $user->setPathImg($filename . "." . $ext);
-                \App\Session::addFlash("success", "Image mise à jour !");
+                    $manager = new \Model\Managers\UserManager();
+                    $manager->updateAvatar($user->getId(), "$filename.$ext");
+
+                    $user->setPathImg($filename . "." . $ext);
+                    \App\Session::addFlash("success", "Image mise à jour !");
+                } else {
+                    \App\Session::addFlash("error", "Format d'image non autorisé.");
+                }
             } else {
-                \App\Session::addFlash("error", "Format non autorisé.");
+                \App\Session::addFlash("error", "Image trop lourde (max 5 Mo).");
             }
         } else {
-            \App\Session::addFlash("error", "Image trop lourde (max 2 Mo).");
+            \App\Session::addFlash("error", "Erreur lors de l'envoi.");
         }
-    } else {
-        \App\Session::addFlash("error", "Erreur lors de l'envoi.");
-    }
 
-    return $this->redirectTo("security", "profile");
-    }   
+        return $this->redirectTo("security", "profile");
+    }
+  
 
 
 
